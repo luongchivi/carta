@@ -1,9 +1,7 @@
 package com.blog.carta.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,10 +9,10 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data // dùng để tạo getter/setter cho các field
 @AllArgsConstructor // tạo 1 constructor với full field
 @NoArgsConstructor // tạo 1 constructor với không có field nào hết
-
+@Getter
+@Setter
 @Entity // dùng annotation Entity
 @Table( // setup tên bảng cho Class POST là posts và column title unique
         name = "posts", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})}
@@ -50,7 +48,7 @@ public class Post {
             mappedBy = "post",
             cascade = CascadeType.ALL, // có nghĩa là khi delete bài post thì sẽ tự động xóa luôn tất cả comments con của bài post
             orphanRemoval = true,
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     private Set<Comment> comments = new HashSet<>();
 }

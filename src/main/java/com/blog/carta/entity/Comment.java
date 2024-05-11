@@ -1,16 +1,16 @@
 package com.blog.carta.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -37,7 +37,7 @@ public class Comment {
 
     // fetch = FetchType.LAZY có nghĩa là sẽ không lấy post object trong database khi query comment
     // FetchType.EAGER sẽ lấy luôn post object trong database khi query comment
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false) // JoinColumn là chỉ định foreign key của bảng posts
     private Post post;
 }
