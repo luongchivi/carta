@@ -9,6 +9,7 @@ import com.blog.carta.repository.CommentRepository;
 import com.blog.carta.repository.PostRepository;
 import com.blog.carta.response.CommentResponse;
 import com.blog.carta.response.CommentsResponse;
+import com.blog.carta.response.MessageResponse;
 import com.blog.carta.service.CommentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -98,6 +99,20 @@ public class CommentServiceImpl implements CommentService {
         CommentResponse commentResponse = mapToResponse(comment);
 
         return commentResponse;
+    }
+
+    @Override
+    public MessageResponse deleteCommentByCommentId(Long postId, Long commentId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+
+        if (!comment.getPost().getId().equals(post.getId())) {
+            throw new CommentPostException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+        }
+
+        commentRepository.delete(comment);
+
+        return new MessageResponse("Delete post successfully");
     }
 
     private Comment mapToEntity(CommentDto commentDto) {

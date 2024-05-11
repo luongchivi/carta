@@ -2,6 +2,7 @@ package com.blog.carta.controller;
 
 import com.blog.carta.payload.CommentDto;
 import com.blog.carta.response.CommentResponse;
+import com.blog.carta.response.MessageResponse;
 import com.blog.carta.service.CommentService;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
@@ -57,5 +58,14 @@ public class CommentController {
             @RequestBody CommentDto commentDto
     ) {
         return new ResponseEntity<>(commentService.updateCommentByCommentId(postId, commentId, commentDto), HttpStatus.OK);
+    }
+
+    // DELETE /api/posts/{postId}/comments/{commentId}
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<MessageResponse> deleteCommentByCommentId(
+            @PathVariable(name = "postId") long postId,
+            @PathVariable(name = "commentId") long commentId
+    ) {
+        return new ResponseEntity<>(commentService.deleteCommentByCommentId(postId, commentId), HttpStatus.OK);
     }
 }
