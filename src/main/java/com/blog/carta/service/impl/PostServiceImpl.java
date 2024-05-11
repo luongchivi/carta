@@ -1,8 +1,10 @@
 package com.blog.carta.service.impl;
 
+import com.blog.carta.entity.Comment;
 import com.blog.carta.entity.Post;
 import com.blog.carta.exception.ResourceNotFoundException;
 import com.blog.carta.payload.PostDto;
+import com.blog.carta.repository.CommentRepository;
 import com.blog.carta.repository.PostRepository;
 import com.blog.carta.response.CommentResponse;
 import com.blog.carta.response.MessageResponse;
@@ -26,8 +28,11 @@ public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
 
-    public PostServiceImpl(PostRepository postRepository) {
+    private CommentRepository commentRepository;
+
+    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -88,8 +93,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public MessageResponse deletePostById(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+
+        List<Comment> comments = commentRepository.findByPostId(id); // tìm comments có post_id = id và delete nó
+
+        commentRepository.deleteAll(comments);
         postRepository.delete(post);
-        return new MessageResponse("Delete post successfully");
+
+        return new MessageResponse("Delete post and associated comments successfully");
     }
 
     // convert PostDto into entity post
