@@ -11,6 +11,7 @@ import com.blog.carta.response.CommentResponse;
 import com.blog.carta.response.CommentsResponse;
 import com.blog.carta.response.MessageResponse;
 import com.blog.carta.service.CommentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,9 +29,12 @@ public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;
     private PostRepository postRepository;
 
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
+    private ModelMapper mapper;
+
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, ModelMapper mapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -116,23 +120,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private Comment mapToEntity(CommentDto commentDto) {
-        Comment comment = new Comment();
-        comment.setBody(commentDto.getBody());
-        comment.setEmail(commentDto.getEmail());
-        comment.setName(commentDto.getName());
+        Comment comment = mapper.map(commentDto, Comment.class);
         return comment;
     }
 
     private CommentResponse mapToResponse(Comment comment) {
-        CommentResponse commentResponse = new CommentResponse();
-        commentResponse.setEmail(comment.getEmail());
-        commentResponse.setName(comment.getName());
-        commentResponse.setBody(comment.getBody());
-        commentResponse.setId(comment.getId());
-        commentResponse.setCreatedAt(comment.getCreatedAt());
-        commentResponse.setUpdatedAt(comment.getUpdatedAt());
-        commentResponse.setPostId(comment.getPost().getId());
-
+        CommentResponse commentResponse = mapper.map(comment, CommentResponse.class);
         return commentResponse;
     }
 }

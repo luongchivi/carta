@@ -11,6 +11,7 @@ import com.blog.carta.response.MessageResponse;
 import com.blog.carta.response.PostResponse;
 import com.blog.carta.response.PostsResponse;
 import com.blog.carta.service.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,9 +31,12 @@ public class PostServiceImpl implements PostService {
 
     private CommentRepository commentRepository;
 
-    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository) {
+    private ModelMapper mapper;
+
+    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, ModelMapper mapper) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -102,35 +106,19 @@ public class PostServiceImpl implements PostService {
         return new MessageResponse("Delete post and associated comments successfully");
     }
 
-    // convert PostDto into entity post
+    // convert PostDto into entity post dùng thư viện modelMapper để map từ Dto sang entity
     private Post mapToEntity(PostDto postDto) {
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
+        Post post = mapper.map(postDto, Post.class);
         return post;
     }
 
     // convert entity post into Response
     private PostResponse mapToResponse(Post post) {
-        PostResponse postResponse = new PostResponse();
-        postResponse.setId(post.getId());
-        postResponse.setTitle(post.getTitle());
-        postResponse.setDescription(post.getDescription());
-        postResponse.setContent(post.getContent());
-        postResponse.setCreatedAt(post.getCreatedAt());
-        postResponse.setUpdatedAt(post.getUpdatedAt());
-
+        PostResponse postResponse = mapper.map(post, PostResponse.class);
         // Loop qua từng comment để convert sang CommentResponse trong PostResponse
         Set<CommentResponse> commentsResponse = post.getComments().stream()
                 .map(comment -> {
-                    CommentResponse commentResponse = new CommentResponse();
-                    commentResponse.setId(comment.getId());
-                    commentResponse.setName(comment.getName());
-                    commentResponse.setEmail(comment.getEmail());
-                    commentResponse.setBody(comment.getBody());
-                    commentResponse.setCreatedAt(comment.getCreatedAt());
-                    commentResponse.setUpdatedAt(comment.getUpdatedAt());
+                    CommentResponse commentResponse = mapper.map(comment, CommentResponse.class);
                     return commentResponse;
                 })
                 .collect(Collectors.toSet());
