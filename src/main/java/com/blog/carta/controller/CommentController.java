@@ -39,4 +39,23 @@ public class CommentController {
     ) {
         return new ResponseEntity<>(commentService.getAllCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection), HttpStatus.OK);
     }
+
+    // GET /api/posts/{postId}/comments/{commentId}
+    @GetMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentResponse> getCommentByCommentId(
+            @PathVariable(name = "postId") long postId,
+            @PathVariable(name = "commentId") long commentId
+    ) {
+        return new ResponseEntity<>(commentService.getCommentByCommentId(postId, commentId), HttpStatus.OK);
+    }
+
+    // GET /api/posts/{postId}/comments/{commentId}
+    @PutMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentResponse> updateCommentByCommentId(
+            @PathVariable(name = "postId") long postId,
+            @PathVariable(name = "commentId") long commentId,
+            @RequestBody CommentDto commentDto
+    ) {
+        return new ResponseEntity<>(commentService.updateCommentByCommentId(postId, commentId, commentDto), HttpStatus.OK);
+    }
 }

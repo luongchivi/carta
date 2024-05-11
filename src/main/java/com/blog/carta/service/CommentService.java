@@ -9,4 +9,8 @@ public interface CommentService {
     CommentResponse createComment(Long postId, CommentDto commentDto);
 
     CommentsResponse getAllCommentsByPostId(Long postId, int pageNumber, int pageSize, String sortBy, String sortDirection);
+
+    CommentResponse getCommentByCommentId(Long postId, Long commentId);
+
+    CommentResponse updateCommentByCommentId(Long postId, Long commentId, CommentDto commentDto);
 }
