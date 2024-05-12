@@ -5,6 +5,7 @@ import com.blog.carta.response.MessageResponse;
 import com.blog.carta.response.PostResponse;
 import com.blog.carta.response.PostsResponse;
 import com.blog.carta.service.PostService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class PostController {
 
     // POST /api/posts
     @PostMapping
-    public ResponseEntity<PostResponse> createPost(@RequestBody PostDto postDto) {
+    public ResponseEntity<PostResponse> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
@@ -46,7 +47,7 @@ public class PostController {
 
     // PUT /api/posts/{id}
     @PutMapping("/{id}")
-    public PostResponse updatePostById(@PathVariable(name = "id") long id, @RequestBody PostDto postDto) {
+    public PostResponse updatePostById(@Valid @PathVariable(name = "id") long id, @RequestBody PostDto postDto) {
         return postService.updatePostById(id, postDto);
     }
 
