@@ -19,8 +19,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
     private CustomUserDetailsService customUserDetailsService;
+
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+        this.customUserDetailsService = customUserDetailsService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,7 +35,6 @@ public class SecurityConfig {
         auth.userDetailsService(customUserDetailsService);
     }
 
-    // Configuring HttpSecurity
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -45,25 +47,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    // TODO:
-    // I using spring boot 3.2.5 and spring-boot-starter-security 3.2.5
-    // I want to refactor this to connect database user and role in CustomUserDetailsService
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails admin = User.builder()
-//                .username("admin")
-//                .password(passwordEncoder().encode("admin"))
-//                .roles("ADMIN").build();
-//        UserDetails user = User.builder()
-//                .username("user")
-//                .password(passwordEncoder().encode("user"))
-//                .roles("USER").build();
-//        return new InMemoryUserDetailsManager(admin, user);
-//    }
-//
-//    @Bean
-//    PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 }
