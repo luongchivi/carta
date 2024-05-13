@@ -8,6 +8,7 @@ import com.blog.carta.service.PostService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.constraints.Min;
 
@@ -23,6 +24,7 @@ public class PostController {
     }
 
     // POST /api/posts
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PostResponse> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
@@ -46,12 +48,14 @@ public class PostController {
     }
 
     // PUT /api/posts/{id}
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public PostResponse updatePostById(@Valid @PathVariable(name = "id") long id, @RequestBody PostDto postDto) {
         return postService.updatePostById(id, postDto);
     }
 
     // DELETE /api/posts/{id}
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> deletePostById(@PathVariable(name = "id") long id) {
         return new ResponseEntity<>(postService.deletePostById(id), HttpStatus.OK);
