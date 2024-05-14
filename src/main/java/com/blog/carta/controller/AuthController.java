@@ -6,6 +6,9 @@ import com.blog.carta.payload.SignInDto;
 import com.blog.carta.payload.SignUpDto;
 import com.blog.carta.repository.RoleRepository;
 import com.blog.carta.repository.UserRepository;
+import com.blog.carta.response.SignInResponse;
+import com.blog.carta.response.SignUpResponse;
+import com.blog.carta.security.JwtTokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,23 +35,35 @@ public class AuthController {
 
     private RoleRepository roleRepository;
 
-    @Autowired
+    private JwtTokenProvider tokenProvider;
+
     private PasswordEncoder passwordEncoder;
 
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository) {
+    public AuthController(
+            AuthenticationManager authenticationManager,
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            JwtTokenProvider tokenProvider,
+            PasswordEncoder passwordEncoder
+    ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.tokenProvider = tokenProvider;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<String> authenticateUser(@Valid @RequestBody SignInDto signInDto) {
+    public ResponseEntity<SignInResponse> authenticateUser(@Valid @RequestBody SignInDto signInDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signInDto.getUsernameOrEmail(), signInDto.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed-in successfully", HttpStatus.OK);
+        String jwt = tokenProvider.generateToken((org.springframework.security.core.userdetails.User) authentication.getPrincipal());
+        SignInResponse signInResponse = new SignInResponse();
+        signInResponse.setAccessToken(jwt);
+        return new ResponseEntity<>(signInResponse, HttpStatus.OK);
     }
 
     @PostMapping("/signup")
@@ -71,6 +86,6 @@ public class AuthController {
         user.setRoles(Collections.singleton(role));
 
         userRepository.save(user);
-        return new ResponseEntity<>("User register successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(new SignUpResponse("User register successfully"), HttpStatus.CREATED);
     }
 }

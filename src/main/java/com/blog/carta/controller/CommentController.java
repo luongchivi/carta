@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.blog.carta.response.CommentsResponse;
 
@@ -25,12 +26,14 @@ public class CommentController {
     }
 
     // POST /api/posts/{postId}/comments
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<CommentResponse> createComment(@Valid @PathVariable(name = "postId") long postId, @RequestBody CommentDto commentDto) {
         return new ResponseEntity<>(commentService.createComment(postId, commentDto), HttpStatus.CREATED);
     }
 
     // GET /api/posts/{postId}/comments
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/posts/{postId}/comments")
     public ResponseEntity<CommentsResponse> getAllCommentsByPostId(
             @PathVariable(name = "postId") long postId,
@@ -43,6 +46,7 @@ public class CommentController {
     }
 
     // GET /api/posts/{postId}/comments/{commentId}
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<CommentResponse> getCommentByCommentId(
             @PathVariable(name = "postId") long postId,
@@ -52,6 +56,7 @@ public class CommentController {
     }
 
     // GET /api/posts/{postId}/comments/{commentId}
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<CommentResponse> updateCommentByCommentId(
             @PathVariable(name = "postId") long postId,
@@ -62,6 +67,7 @@ public class CommentController {
     }
 
     // DELETE /api/posts/{postId}/comments/{commentId}
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<MessageResponse> deleteCommentByCommentId(
             @PathVariable(name = "postId") long postId,
