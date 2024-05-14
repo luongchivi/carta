@@ -7,12 +7,12 @@ import lombok.Data;
 public class PostDto {
     private Long id;
 
-    @NotEmpty
+    @NotEmpty(message = "Title  is required")
     private String title;
 
-    @NotEmpty
+    @NotEmpty(message = "Description  is required")
     private String description;
 
-    @NotEmpty
+    @NotEmpty(message = "Content  is required")
     private String content;
 }
